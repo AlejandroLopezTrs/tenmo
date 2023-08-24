@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AccountController {
 
-  //  @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
 
 }
