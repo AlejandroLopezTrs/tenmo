@@ -5,7 +5,7 @@ import com.techelevator.tenmo.model.Transfers;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface TransfersDao {
+public interface  TransfersDao {
 
     public List<Transfers> getAllTransfers(int userID);
     public Transfers getTransferByID(int transactionID);
