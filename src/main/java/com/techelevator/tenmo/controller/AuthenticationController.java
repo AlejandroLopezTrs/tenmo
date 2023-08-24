@@ -2,6 +2,7 @@ package com.techelevator.tenmo.controller;
 
 import javax.validation.Valid;
 
+import com.techelevator.tenmo.model.Balance;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -59,7 +60,10 @@ public class AuthenticationController {
         }
     }
 
-
+    @RequestMapping(value = "api/tenmo/balance", method = RequestMethod.GET)
+    public Balance getUserBalance(){
+      return a;
+    }
     /**
      * Object to return as body in JWT Authentication.
      */
