@@ -1,36 +1,49 @@
 package com.techelevator.tenmo.model;
 
-import java.math.BigDecimal;
-
 public class Account {
+    private int accountId;
+    private int userId;
+    private double balance;
 
-    private int accountID;
-    private int userID;
-    private BigDecimal balance;
-
-    // TODO: Check to make sure this all looks good.
-
-    public int getAccountID() {
-        return accountID;
+    public Account(int accountId, int userId, double balance){
+        this.accountId = accountId;
+        this.userId = userId;
+        this.balance = balance;
     }
 
-    public void setAccountID(int accountID) {
-        this.accountID = accountID;
+    public Account() {
+
     }
 
-    public int getUserID() {
-        return userID;
+    public int getAccountId() {
+        return accountId;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public int getUserId() {
+        return userId;
     }
 
-    public BigDecimal getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+    public double setBalance(double balance) {
+        return balance;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "accountId=" + accountId +
+                ", userId=" + userId +
+                ", balance=" + balance +
+                '}';
     }
 }
