@@ -11,8 +11,10 @@ import java.util.List;
 public class JdbcAccountDao implements AccountDao {
 
     private JdbcTemplate jdbcTemplate;
-    public JdbcAccountDao(JdbcTemplate jdbcTemplate){
+    private UserDao userDao;
+    public JdbcAccountDao(JdbcTemplate jdbcTemplate, UserDao userDao){
         this.jdbcTemplate = jdbcTemplate;
+        this.userDao = userDao;
     }
     @Override
     public List<Account> getAllAccounts() {
@@ -29,7 +31,7 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public Account getAccountById(int id) {
-        String sql = "SELECT account_id, user_id, balance FROM account WHERE account_id = ?";
+        String sql = "SELECT account_id, user_id, balance FROM account WHERE account_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
         Account account = null;
         if (results.next()) {
@@ -39,16 +41,24 @@ public class JdbcAccountDao implements AccountDao {
         return account;
     }
 
-    @Override
-    public Account createAccount(Account account) {
-        return null;
-    }
+
+
+    //@Override
+    //public Account createAccount(Account account) {
+    //    String sql = ""
+   // }
+
 
     @Override
-    public BigDecimal getBalance(int userId) {
+    public BigDecimal getBalance(String username) {
+        int userId = userDao.findIdByUsername(username);
         String sql = "SELECT balance FROM account WHERE account_id = ?";
-        SqlRowSet results =
-        return null;
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        BigDecimal balance = null;
+        if (results.next()) {
+            balance = results.getBigDecimal("Balance");
+        }
+        return balance;
     }
 
     private Account mapRowToAccount(SqlRowSet rs) {

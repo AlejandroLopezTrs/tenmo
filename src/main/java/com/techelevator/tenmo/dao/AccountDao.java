@@ -9,10 +9,8 @@ public interface AccountDao {
 
     List<Account> getAllAccounts();
     Account getAccountById(int id);
-    Account createAccount(Account account);
-    BigDecimal getBalance(int userId);
+   // Account createAccount(Account account);
 
-
-
+    BigDecimal getBalance(String username);
 } //TODO: finish implementing account dao
 
