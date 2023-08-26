@@ -4,6 +4,7 @@ package com.techelevator.tenmo.controller;
 import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,12 +20,24 @@ import java.util.List;
 @RestController
 @PreAuthorize("isAuthenticated()")
 public class AccountController {
-   private AccountDao accountDao;
+
+    @Autowired
+    private AccountDao accountDao;
+
+    public AccountController(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
 
 
-    @RequestMapping(path = "/api/tenmo/account/balance", method = RequestMethod.GET)
-    public String getBalance(Principal principal){
-    return principal.getName();
+    @RequestMapping(path = "/api/tenmo/account/balance/{id}", method = RequestMethod.GET)
+    public BigDecimal getBalance(@PathVariable int id){
+        BigDecimal balance = accountDao.getBalanceForAccountById(id);
+        if (balance == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: Account does not exist.");
+        }
+        //TODO: return proper format with username and balance, currently only returns balance.
+        //TODO: Transfers do not subtract money from total balance.
+        return balance;
 }
 
 //GET ALL ACCOUNTS

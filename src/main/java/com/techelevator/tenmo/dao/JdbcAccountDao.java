@@ -3,11 +3,13 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.model.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JdbcAccountDao implements AccountDao {
 
     private JdbcTemplate jdbcTemplate;
@@ -71,6 +73,17 @@ public class JdbcAccountDao implements AccountDao {
         BigDecimal balance = null;
         if (results.next()) {
             balance = results.getBigDecimal("Balance");
+        }
+        return balance;
+    }
+
+    @Override
+    public BigDecimal getBalanceForAccountById(int id) {
+        String sql = "SELECT balance FROM account WHERE account_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
+        BigDecimal balance = null;
+        if (results.next()) {
+            balance = results.getBigDecimal("balance");
         }
         return balance;
     }

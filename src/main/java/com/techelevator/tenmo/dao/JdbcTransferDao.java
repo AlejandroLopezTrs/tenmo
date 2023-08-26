@@ -1,16 +1,18 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Component
 public class JdbcTransferDao implements TransferDao {
     private AccountDao accountDao;
     private JdbcTemplate jdbcTemplate;
@@ -53,14 +55,22 @@ public class JdbcTransferDao implements TransferDao {
 
         @ResponseStatus(HttpStatus.CREATED)
         @Override
-        public Transfer newTransfer ( int accountIdFrom, int accountIdTo, BigDecimal amount){
+        public Transfer newTransfer (int accountIdFrom, int accountIdTo, BigDecimal amount){
             if (accountIdFrom == accountIdTo) {
-                System.out.println("Error: Cannot send money to the same account.");
+                throw new IllegalArgumentException("Error: Cannot send money to the same account.");
             }
-//        if(amount.compareTo(accountDao.getBalance(accountIdFrom)) > BigDecimal.ZERO)
-//        String sql = "INSERT INTO transfer (amount, accountId_from, accountId_to) " +
-//                "VALUES (?, ?, ?);";
-            return null;
+            String sqlForInsert = "INSERT INTO transfer (amount, accountid_from, accountid_to) VALUES (?, ?, ?) RETURNING transfer_id";
+            int transferId = jdbcTemplate.queryForObject(sqlForInsert, int.class, amount, accountIdFrom, accountIdTo);
+
+            String sqlForSelect = "SELECT transfer_id, amount, status, accountid_from, accountid_to FROM transfer WHERE transfer_id = ?" ;
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sqlForSelect, transferId);
+
+            if (results.next()) {
+                return mapRowToTransfer(results);
+            } else {
+                return null;//TODO: need to throw exception here
+                //TODO: also status needs to be "Approved". Currently returns "null"
+            }
         }
 
         private Transfer mapRowToTransfer (SqlRowSet rs){
