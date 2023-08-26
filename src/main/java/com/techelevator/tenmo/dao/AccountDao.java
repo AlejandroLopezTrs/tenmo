@@ -9,8 +9,13 @@ public interface AccountDao {
 
     List<Account> getAllAccounts();
     Account getAccountById(int id);
-   // Account createAccount(Account account);
-
+    BigDecimal addToReceiver(BigDecimal addedAmount, int accountIdTo);
+    BigDecimal subtractFromSender(BigDecimal subtractedAmount, int accountIdFrom);
     BigDecimal getBalance(String username);
+
+
+    // Account createAccount(Account account); //TODO: IMPLEMENT FUNCTIONALITY DURING A FUTURE UPDATE
+
+
 } //TODO: finish implementing account dao
 

@@ -59,10 +59,7 @@ public class AuthenticationController {
         }
     }
 
-    //@RequestMapping(value = "api/tenmo/balance", method = RequestMethod.GET)
-    //public Balance getUserBalance(){
-     // return null;
-   // }
+
     /**
      * Object to return as body in JWT Authentication.
      */

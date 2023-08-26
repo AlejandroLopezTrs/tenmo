@@ -66,23 +66,25 @@ public class JdbcUserDao implements UserDao {
         } catch (DataAccessException e) {
             return false;
         }
+        int userId = newUserId;
+        String sqlNewAccount = "INSERT INTO account(user_id, balance) VALUES (?, 1000) " +
+                "RETURNING account_id;";
 
-        // TODO: Create the account record with initial balance
-
+        jdbcTemplate.queryForObject(sqlNewAccount, Integer.class, userId);
         return true;
     }
 
-    public List<User> allUsers(){
-        List<User> usersList = new ArrayList<>();
-        String sql = "SELECT * FROM tenmo_user";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-
-        while ((results.next())){
-            User user = mapRowToUser(results);
-            usersList.add(user);
-        }
-        return usersList;
-    }
+//    public List<User> allUsers(){
+//        List<User> usersList = new ArrayList<>();
+//        String sql = "SELECT * FROM tenmo_user";
+//        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+//
+//        while ((results.next())){
+//            User user = mapRowToUser(results);
+//            usersList.add(user);
+//        }
+//        return usersList;
+//    }
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();

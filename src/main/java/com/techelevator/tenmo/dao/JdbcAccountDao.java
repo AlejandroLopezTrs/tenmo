@@ -12,16 +12,18 @@ public class JdbcAccountDao implements AccountDao {
 
     private JdbcTemplate jdbcTemplate;
     private UserDao userDao;
-    public JdbcAccountDao(JdbcTemplate jdbcTemplate, UserDao userDao){
+
+    public JdbcAccountDao(JdbcTemplate jdbcTemplate, UserDao userDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.userDao = userDao;
     }
+
     @Override
     public List<Account> getAllAccounts() {
         List<Account> allAccounts = new ArrayList<>();
         String sql = "SELECT account_id, user_id, balance FROM account;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-        while ((results.next())){
+        while ((results.next())) {
             Account account = mapRowToAccount(results);
             allAccounts.add(account);
         }
@@ -37,18 +39,30 @@ public class JdbcAccountDao implements AccountDao {
         if (results.next()) {
             account = mapRowToAccount(results);
         }
-
         return account;
     }
-
-
-
+    @Override
+    public BigDecimal addToReceiver(BigDecimal addedAmount, int accountIdTo) {
+        Account account = getAccountById(accountIdTo);
+        BigDecimal newBalance = account.getBalance().add(addedAmount);
+        String sql = "UPDATE account SET balance  = ? WHERE user_id = ?;";
+        //TODO: ADD a try catch?
+        jdbcTemplate.update(sql, addedAmount, accountIdTo);
+        return account.getBalance();
+    }
+    @Override
+    public BigDecimal subtractFromSender(BigDecimal subtractedAmount, int accountIdFrom) {
+        Account account = getAccountById(accountIdFrom);
+        BigDecimal newBalance = account.getBalance().subtract(subtractedAmount);
+        String sql = "UPDATE account SET balance  = ? WHERE user_id = ?;";
+        //TODO: ADD a try catch?
+        jdbcTemplate.update(sql, subtractedAmount, accountIdFrom);
+        return account.getBalance();
+    }
     //@Override
     //public Account createAccount(Account account) {
     //    String sql = ""
    // }
-
-
     @Override
     public BigDecimal getBalance(String username) {
         int userId = userDao.findIdByUsername(username);
@@ -68,5 +82,4 @@ public class JdbcAccountDao implements AccountDao {
         account.setBalance(rs.getDouble("balance"));
         return account;
     }
-
 }
