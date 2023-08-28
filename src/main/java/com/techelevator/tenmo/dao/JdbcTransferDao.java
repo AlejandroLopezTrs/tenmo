@@ -41,9 +41,9 @@ public class JdbcTransferDao implements TransferDao {
         @Override
         public Transfer getTransferByTransferId ( int transactionId){
            // int transferId = transferDao.getTransferByTransferId(transactionId);
-            String sql = "SELECT transfer_id, amount, status, accountId_from, accountId_to " +
+            String sql = "SELECT transfer_id, amount, 'Approved' AS status, accountId_from, accountId_to " +
                     "FROM transfer WHERE transfer_id = ?;";
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transactionId);
             Transfer transferSearchedFor = null;
             if (results.next()) {
                 transferSearchedFor = mapRowToTransfer(results);
@@ -55,7 +55,10 @@ public class JdbcTransferDao implements TransferDao {
 
         @Override
         public Transfer getTransferStatus(int transferId) {
-            return null;
+            Transfer transfer = new Transfer();
+            transfer.setTransferId(transferId);
+            transfer.setStatus("Approved");
+            return transfer;
         }//TODO: finish transfer status
 
 
@@ -72,7 +75,9 @@ public class JdbcTransferDao implements TransferDao {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sqlForSelect, transferId);
 
             if (results.next()) {
-                return mapRowToTransfer(results);
+                Transfer transfer = mapRowToTransfer(results);
+                transfer.setStatus("Approved");
+                return transfer;
             } else {
                 return null;//TODO: need to throw exception here
                 //TODO: also status needs to be "Approved". Currently returns "null"
