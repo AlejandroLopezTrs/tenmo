@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -28,6 +27,13 @@ public class JdbcTransferDao implements TransferDao {
             List<Transfer> allTransfers = new ArrayList<>();
             String sql = "SELECT transfer_id, amount, status, accountId_from, " +
                     "accountId_to FROM transfer WHERE user_id = ?";
+
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+
+            while (results.next()) {
+                Transfer transfer = mapRowToTransfer(results);
+                allTransfers.add(transfer);
+            }
             return allTransfers;
 
         }
@@ -47,13 +53,13 @@ public class JdbcTransferDao implements TransferDao {
 
         }
 
+        @Override
+        public Transfer getTransferStatus(int transferId) {
+            return null;
+        }//TODO: finish transfer status
 
-        //@Override
-        //public Transfer getTransferStatus() {
-        //    return null;
-        // }
 
-        @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.CREATED)
         @Override
         public Transfer newTransfer (int accountIdFrom, int accountIdTo, BigDecimal amount){
             if (accountIdFrom == accountIdTo) {
@@ -62,7 +68,7 @@ public class JdbcTransferDao implements TransferDao {
             String sqlForInsert = "INSERT INTO transfer (amount, accountid_from, accountid_to) VALUES (?, ?, ?) RETURNING transfer_id";
             int transferId = jdbcTemplate.queryForObject(sqlForInsert, int.class, amount, accountIdFrom, accountIdTo);
 
-            String sqlForSelect = "SELECT transfer_id, amount, status, accountid_from, accountid_to FROM transfer WHERE transfer_id = ?" ;
+            String sqlForSelect = "SELECT transfer_id, amount, status, accountid_from, accountid_to FROM transfer WHERE transfer_id = ?";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sqlForSelect, transferId);
 
             if (results.next()) {

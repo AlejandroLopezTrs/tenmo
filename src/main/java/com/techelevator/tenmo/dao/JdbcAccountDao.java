@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Account;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -48,8 +49,11 @@ public class JdbcAccountDao implements AccountDao {
         Account account = getAccountById(accountIdTo);
         BigDecimal newBalance = account.getBalance().add(addedAmount);
         String sql = "UPDATE account SET balance  = ? WHERE user_id = ?;";
-        //TODO: ADD a try catch?
-        jdbcTemplate.update(sql, addedAmount, accountIdTo);
+        try {
+            jdbcTemplate.update(sql, newBalance, accountIdTo);
+        } catch (DataAccessException e) {
+            System.out.println("Data access error");
+        }
         return account.getBalance();
     }
     @Override
@@ -57,8 +61,12 @@ public class JdbcAccountDao implements AccountDao {
         Account account = getAccountById(accountIdFrom);
         BigDecimal newBalance = account.getBalance().subtract(subtractedAmount);
         String sql = "UPDATE account SET balance  = ? WHERE user_id = ?;";
-        //TODO: ADD a try catch?
-        jdbcTemplate.update(sql, subtractedAmount, accountIdFrom);
+        try {
+            jdbcTemplate.update(sql, newBalance, accountIdFrom);
+        }catch (DataAccessException e) {
+            System.out.println("Data access error");
+
+        }
         return account.getBalance();
     }
     //@Override

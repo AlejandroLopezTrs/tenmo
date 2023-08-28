@@ -38,6 +38,8 @@ public class TransferController {
     "path": "/api/tenmo/transfer/1"
 }
 */
+
+
     //pass in token- use principal
  //   GET getAllTransfers /api/tenmo/transfer
  @RequestMapping(path = "/api/tenmo/transfer/user/{userId}", method = RequestMethod.GET)
