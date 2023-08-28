@@ -41,7 +41,7 @@ public class JdbcTransferDao implements TransferDao {
         @Override
         public Transfer getTransferByTransferId ( int transactionId){
            // int transferId = transferDao.getTransferByTransferId(transactionId);
-            String sql = "SELECT transfer_id, amount, 'Approved' AS status, accountId_from, accountId_to " +
+            String sql = "SELECT transfer_id, amount, 'Approved' AS status, accountId_from, accountId_to " + //APPROVED attempt to hardcode for proper result
                     "FROM transfer WHERE transfer_id = ?;";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transactionId);
             Transfer transferSearchedFor = null;
