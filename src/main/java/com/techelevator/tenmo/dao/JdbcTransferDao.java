@@ -73,6 +73,15 @@ public class JdbcTransferDao implements TransferDao {
 
             String sqlForSelect = "SELECT transfer_id, amount, status, accountid_from, accountid_to FROM transfer WHERE transfer_id = ?";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sqlForSelect, transferId);
+        //TODO:
+        // 1. run a update that increases bal of recipient
+        String sqlForUpdate1 = "UPDATE account SET balance = (account.balance + ?) WHERE account.account_id = ? returning balance;";
+        SqlRowSet update1Results = jdbcTemplate.queryForRowSet(sqlForUpdate1, amount, accountIdTo);
+
+        //TODO:
+        // 2. update that decreases bal of sender
+        String sqlForUpdate2 = "UPDATE account SET balance = (account.balance - ?) WHERE account.account_id = ? returning balance;" ;
+        SqlRowSet update2Results = jdbcTemplate.queryForRowSet(sqlForUpdate2, amount, accountIdFrom);
 
             if (results.next()) {
                 Transfer transfer = mapRowToTransfer(results);
